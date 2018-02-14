@@ -85,6 +85,11 @@ Vagrant.configure("2") do |config|
     config.registration.skip = true
   end
 
+  config.vm.provider :libvirt do |libvirt|
+    # Avoid "Call to virDomainCreateWithFlags failed: unsupported configuration: host doesn't support invariant TSC" error when using snapshots
+    libvirt.cpu_mode = 'host-passthrough'   
+  end
+
   # Distribute previously created ssh keys so machines can log in to each other, e.g. for Ansible
   # Register machine to Red Hat if subscription-manager is installed, using the name "vagrant-<hostname>-<machinename>"
   config.vm.provision "shell", name: "el-vagrant", inline: <<-SHELL
