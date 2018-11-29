@@ -93,6 +93,9 @@ Vagrant.configure("2") do |config|
   # Distribute previously created ssh keys so machines can log in to each other, e.g. for Ansible
   # Register machine to Red Hat if subscription-manager is installed, using the name "vagrant-<hostname>-<machinename>"
   config.vm.provision "shell", name: "el-vagrant", inline: <<-SHELL
+    # workaround https://github.com/devopsgroup-io/vagrant-hostmanager/issues/203
+    sed -i "/^127.0.0.1.*$(hostname).*/d" /etc/hosts
+
     for user in root vagrant; do
       home=$(getent passwd ${user} | cut -d: -f6)
       if [ ! -e ${home}/.ssh/id_rsa ]; then
